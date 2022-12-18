@@ -68,8 +68,8 @@ def compute_hand_score(player):
         if i == "K" or i == "Q" or i == "J":
             hand_score += 10
         if i == "A":
-            if hand_score + 10 > 21:
+            if hand_score + 11 > 21:
                 hand_score += 1
             else:
-                hand_score += 10
+                hand_score += 11
     player.score = hand_score
