@@ -49,11 +49,11 @@ def deal_cards(deck, dealer, player):
         draw_card(deck, dealer)
 
     
-deal_cards(game_deck, dealer1, player1)
+# deal_cards(game_deck, dealer1, player1)
 
-print(dealer1.cards)
-print(game_deck.delt_cards)
-print(player1.cards)
+# print(dealer1.cards)
+# print(game_deck.delt_cards)
+# print(player1.cards)
 
 
 
