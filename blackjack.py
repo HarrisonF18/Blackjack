@@ -3,15 +3,30 @@
 import random
 
 class Deck:
-   self.deck = ["A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2]
+   deck = ["A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2]
 
 class Dealer:
-    self.cards = []
-    self. score = 0
+    cards = []
+    score = 0
 
 class Player:
-    self.name = ""
-    self.cards = []
-    self.score = 0
+    name = ""
+    cards = []
+    score = 0
 
 print("Welcome to the Blackjack table")
+
+
+# player1 = Player()
+
+# game_prep_complete = False
+
+# while game_prep_complete == False:
+    
+#     player_name_set = False
+#     while player_name_set == False:
+#         name = input("Enter name: ")
+#         correct_name_confirmation = input(name + ". Is that correct? (y/n)")
+#         if correct_name_confirmation == "y":
+#             player1.self.name = name
+#             player_name_set = True
