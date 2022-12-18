@@ -3,7 +3,7 @@
 import random
 
 class Deck:
-   deck = ["A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2]
+    deck = ["A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2]
 
 class Dealer:
     cards = []
@@ -13,20 +13,21 @@ class Player:
     name = ""
     cards = []
     score = 0
+    cash = 1000
 
 print("Welcome to the Blackjack table")
 
 
-# player1 = Player()
+player1 = Player()
 
-# game_prep_complete = False
-
-# while game_prep_complete == False:
-    
-#     player_name_set = False
-#     while player_name_set == False:
-#         name = input("Enter name: ")
-#         correct_name_confirmation = input(name + ". Is that correct? (y/n)")
-#         if correct_name_confirmation == "y":
-#             player1.self.name = name
-#             player_name_set = True
+def set_player_name(player):
+    set_player_name_complete = False
+    while set_player_name_complete == False:
+        input_name = input("Enter player name:")
+        correct_name_confirmation = input(input_name + ". Is this correct? (y/n)")
+        if correct_name_confirmation != "y" and correct_name_confirmation != "n":
+            print("Invaild choice")
+            continue
+        if correct_name_confirmation == "y":
+            player.name = input_name
+            set_player_name_complete = True
