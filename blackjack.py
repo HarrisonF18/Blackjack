@@ -3,7 +3,8 @@
 import random
 
 class Deck:
-    deck = ["A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2]
+    cards = ["A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2]
+    delt_cards = []
 
 class Dealer:
     cards = []
@@ -17,8 +18,9 @@ class Player:
 
 print("Welcome to the Blackjack table")
 
-
 player1 = Player()
+game_deck = Deck()
+dealer1 = Dealer()
 
 def set_player_name(player):
     set_player_name_complete = False
@@ -31,3 +33,27 @@ def set_player_name(player):
         if correct_name_confirmation == "y":
             player.name = input_name
             set_player_name_complete = True
+
+set_player_name(player1)
+
+def draw_card(deck, player):
+    random_deck_index = random.randint(0, (len(deck.cards)))
+    deck.delt_cards.append(deck.cards[random_deck_index])
+    player.cards.append(deck.cards[random_deck_index])
+    deck.cards.pop(random_deck_index)
+
+def deal_cards(deck, dealer, player):
+    for i in range(1, 3):
+        draw_card(deck, player)
+    for i in range(1, 3):
+        draw_card(deck, dealer)
+
+    
+deal_cards(game_deck, dealer1, player1)
+
+print(dealer1.cards)
+print(game_deck.delt_cards)
+print(player1.cards)
+
+
+
