@@ -142,7 +142,7 @@ def available_side_bets(player, dealer):
     available_side_bets.append("No Side Bet")
     return available_side_bets
 
-def set_side_bets(player, dealer):
+def set_side_bet(player, dealer):
     setting_side_bet = True
     while setting_side_bet == True:
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -165,6 +165,10 @@ def set_side_bets(player, dealer):
             setting_side_bet = False
         else:
             continue
+
+def execute_surrender(player, dealer):
+    player.
+
 
 
 def offer_player_to_hit(player):
