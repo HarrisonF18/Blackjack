@@ -2,6 +2,7 @@
 
 import random
 import os
+import time
 
 class Deck:
     cards = ["A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2]
@@ -16,6 +17,8 @@ class Player:
     cards = []
     score = 0
     cash = 1000
+    current_bet = 0
+    requested_side_bets = []
 
 def start_game():
     player_start = False
@@ -40,18 +43,53 @@ def set_player_name(player):
         if correct_name_confirmation == "y":
             player.name = input_name
             set_player_name_complete = True
+    print("Welcome, " + player.name)
+    print("Your starting chips value is $1,000")
+    time.sleep(3)
 
-def draw_card(deck, player):
+def make_bet(player):
+    still_setting_bet = True
+    while still_setting_bet == True:
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print("Your current chip value: $" + player.cash)
+        input_bet_amount = input("How much would you like to bet on this hand?")
+        if type(input_bet_amount) != int:
+            print("Invalid Answer.")
+            time.sleep(3)
+            continue
+        if input_bet_amount > player.cash:
+            print("That is more money than you have.")
+            time.sleep(3)
+            continue
+        if input_bet_amount <= player.cash:
+            player.current_bet = input_bet_amount
+            player.cash -= input_bet_amount
+    
+def draw_card(player, deck):
     random_deck_index = random.randint(0, (len(deck.cards)-1))
     deck.delt_cards.append(deck.cards[random_deck_index])
     player.cards.append(deck.cards[random_deck_index])
     deck.cards.pop(random_deck_index)
+    move_aces_to_end_of_all_players_cards()
 
-def deal_cards(deck, dealer, player):
+def deal_cards(player, dealer, deck):
     for i in range(1, 3):
         draw_card(deck, player)
     for i in range(1, 3):
         draw_card(deck, dealer)
+
+def print_cards_during_hand(player, dealer):
+    print("Dealer cards: X " + dealer.cards[1])
+    print("Dealer score: " + dealer.score)
+    print("")
+    print(player.name + "'s cards: " + player.cards)
+    print(player.name + "'s score: " + player.score)
+    print("Bet amount: $" + player.current_bet)
+    print("Chips: $" + player.cash)
+
+def print_cards_dealers_turn(player, dealer):
+    print("Dealer cards: X " + dealer.cards)
+    print(player.name + "'s cards: " + player.cards)
 
 #to move aces to end of hand in order for compute_hand_score function to properly assign a 1 or 10 value to the ace.
 def move_aces_to_end_of_all_players_cards(player, dealer):
@@ -79,6 +117,50 @@ def compute_hand_score(player):
                 hand_score += 11
     player.score = hand_score
 
+# Next several functions for side betting.
+def check_if_player_can_split(player):
+    value_10_cards = ["K", "Q", "J", 10]
+    if player.cards[0] == player.cards[1]:
+        return True
+    if player.cards[0] in value_10_cards and player.cards[1] in value_10_cards:
+        return True
+    else:
+        return False
+
+def check_if_insurance_side_bet_available(dealer):
+    if dealer.cards[1] == "A":
+        return True
+    else:
+        return False
+
+def available_side_bets(player, dealer):
+    available_side_bets = ["Surrender","Double Down"]
+    if check_if_player_can_split(player) == True:
+        available_side_bets.append("Split")
+    if check_if_insurance_side_bet_available(dealer) == True:
+        available_side_bets.append("Insurance")
+    available_side_bets.append("No Side Bet")
+    return available_side_bets
+
+def set_side_bets(player, dealer):
+    player_wants_side_bet = input("Would you like to place a side bet? (y/n)")
+    if player_wants_side_bet == "y":
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print("Available Side Bets:")
+        available_side_bets = available_side_bets(player, dealer)
+        for side_bet in available_side_bets:
+            print(side_bet)
+        print("Chips: $" + player.cash)
+        print("Current Bet: $" + player.current_bet) 
+    
+    selected_side_bet = input("Enter Selection: ")
+    
+
+
+    for bet in available_side_bets:
+
+
+
 def offer_player_to_hit(player):
     answer_submitted = False
     while answer_submitted == False:
@@ -95,3 +177,20 @@ def dealer_hitting(dealer, deck):
     while dealer.score < 17:
         draw_card(deck, dealer)
         compute_hand_score(dealer)
+
+def end_hand(player, dealer, deck):
+    player.cards = []
+    player.score = 0
+    dealer.cards = []
+    dealer.score = 0
+    player.current_bet = 0
+
+    for card in deck.delt_cards:
+        deck.cards.append(card)
+        deck.delt_cards.remove(card)
+
+def game_play(player, dealer, deck):
+    make_bet(player)
+    deal_cards(player, dealer, deck)
+    print_cards_during_hand(player, dealer)
+    #insert side 
