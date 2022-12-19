@@ -143,22 +143,28 @@ def available_side_bets(player, dealer):
     return available_side_bets
 
 def set_side_bets(player, dealer):
-    player_wants_side_bet = input("Would you like to place a side bet? (y/n)")
-    if player_wants_side_bet == "y":
+    setting_side_bet = True
+    while setting_side_bet == True:
         os.system('cls' if os.name == 'nt' else 'clear')
-        print("Available Side Bets:")
-        available_side_bets = available_side_bets(player, dealer)
-        for side_bet in available_side_bets:
-            print(side_bet)
-        print("Chips: $" + player.cash)
-        print("Current Bet: $" + player.current_bet) 
-    
-    selected_side_bet = input("Enter Selection: ")
-    
-
-
-    for bet in available_side_bets:
-
+        print_cards_during_hand(player, dealer)
+        player_wants_side_bet = input("Would you like to place a side bet? (y/n)")
+        if player_wants_side_bet == "y":
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print_cards_during_hand(player, dealer)
+            print("Available Side Bets:")
+            available_side_bets = available_side_bets(player, dealer)
+            for side_bet in available_side_bets:
+                print(side_bet)
+            selected_side_bet = input("Enter Selection: ")
+            if selected_side_bet not in available_side_bets:
+                continue
+            else:
+                setting_side_bet = False
+                return selected_side_bet
+        if player_wants_side_bet == "n":
+            setting_side_bet = False
+        else:
+            continue
 
 
 def offer_player_to_hit(player):
