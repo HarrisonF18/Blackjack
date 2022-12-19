@@ -25,13 +25,10 @@ def start_game():
         if player_ready.lower() == "start":
             player_start = True
             os.system('cls' if os.name == 'nt' else 'clear')
-            return True
         else:
             os.system('cls' if os.name == 'nt' else 'clear')
             continue
         
-        
-
 def set_player_name(player):
     set_player_name_complete = False
     while set_player_name_complete == False:
@@ -93,3 +90,8 @@ def offer_player_to_hit(player):
             answer_submitted = True
         else:
             continue
+
+def dealer_hitting(dealer, deck):
+    while dealer.score < 17:
+        draw_card(deck, dealer)
+        compute_hand_score(dealer)
