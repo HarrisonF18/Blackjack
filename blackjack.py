@@ -1,6 +1,7 @@
 #letsgooo
 
 import random
+import os
 
 class Deck:
     cards = ["A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2]
@@ -16,11 +17,20 @@ class Player:
     score = 0
     cash = 1000
 
-print("Welcome to the Blackjack table")
-
-player1 = Player()
-game_deck = Deck()
-dealer1 = Dealer()
+def start_game():
+    player_start = False
+    while player_start == False:
+        print("Welcome to the Blackjack table!")
+        player_ready = input("Enter 'start' to begin.")
+        if player_ready.lower() == "start":
+            player_start = True
+            os.system('cls' if os.name == 'nt' else 'clear')
+            return True
+        else:
+            os.system('cls' if os.name == 'nt' else 'clear')
+            continue
+        
+        
 
 def set_player_name(player):
     set_player_name_complete = False
@@ -33,8 +43,6 @@ def set_player_name(player):
         if correct_name_confirmation == "y":
             player.name = input_name
             set_player_name_complete = True
-
-set_player_name(player1)
 
 def draw_card(deck, player):
     random_deck_index = random.randint(0, (len(deck.cards)-1))
@@ -73,3 +81,15 @@ def compute_hand_score(player):
             else:
                 hand_score += 11
     player.score = hand_score
+
+def offer_player_to_hit(player):
+    answer_submitted = False
+    while answer_submitted == False:
+        player_wants_hit = input("would you like another card? (y/n)")
+        if player_wants_hit == "y":
+            draw_card(player)
+            answer_submitted = True
+        if player_wants_hit == "n":
+            answer_submitted = True
+        else:
+            continue
