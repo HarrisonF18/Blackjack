@@ -167,7 +167,18 @@ def set_side_bet(player, dealer):
             continue
 
 def execute_surrender(player, dealer):
-    player.
+    player.cash += (player.current_bet / 2)
+    #insert some way to ed the hand
+
+def execute_double_down(player):
+    player.cash -= player.current_bet
+    player.current_bet = (player.current_bet * 2)
+    #insert way to limit additional cards to 1
+
+def execute_insurance(player, dealer):
+    if check_if_insurance_side_bet_available(dealer) == True:
+        
+
 
 
 
