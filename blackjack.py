@@ -83,6 +83,7 @@ def draw_card(player, dealer, deck):
     player.cards.append(deck.cards[random_deck_index])
     deck.cards.pop(random_deck_index)
     move_aces_to_end_of_all_players_cards(player, dealer)
+    compute_hand_score(player, dealer)
 
 def deal_cards(player, dealer, deck):
     for i in range(1, 3):
@@ -90,15 +91,17 @@ def deal_cards(player, dealer, deck):
     for i in range(1, 3):
         #This function has player/dealer flipped to allow for draw card to work correctly for the initial deal.
         draw_card(dealer, player, deck)
+    
 
 def print_cards_during_hand(player, dealer):
-    print("Dealer cards: X " + dealer.cards[1])
-    print("Dealer score: " + dealer.score)
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print("Dealer cards: X " + str(dealer.cards[1]))
     print("")
-    print(player.name + "'s cards: " + player.cards)
-    print(player.name + "'s score: " + player.score)
-    print("Bet amount: $" + player.current_bet)
-    print("Chips: $" + player.cash)
+    print(player.name + "'s cards: " + str(player.cards[0]) + " " + str(player.cards[1]))
+    print(player.name + "'s score: " + str(player.score))
+    print("")
+    print("Bet amount: $" + str(player.current_bet))
+    print("Chips: $" + str(player.cash))
 
 def print_cards_dealers_turn(player, dealer):
     print("Dealer cards: " + dealer.cards)
@@ -116,19 +119,20 @@ def move_aces_to_end_of_all_players_cards(player, dealer):
             person.cards.append(i)
 
 
-def compute_hand_score(player):
-    hand_score = 0
-    for i in player.cards:
-        if type(i) == int:
-            hand_score += i
-        if i == "K" or i == "Q" or i == "J":
-            hand_score += 10
-        if i == "A":
-            if hand_score + 11 > 21:
-                hand_score += 1
-            else:
-                hand_score += 11
-    player.score = hand_score
+def compute_hand_score(player, dealer):
+    for person in [player, dealer]:
+        hand_score = 0
+        for i in person.cards:
+            if type(i) == int:
+                hand_score += i
+            if i == "K" or i == "Q" or i == "J":
+                hand_score += 10
+            if i == "A":
+                if hand_score + 11 > 21:
+                    hand_score += 1
+                else:
+                    hand_score += 11
+        person.score = hand_score
 
 # Next several functions for side betting.
 def check_if_player_can_split(player):
@@ -227,7 +231,7 @@ def end_hand(player, dealer, deck):
 def game_play(player, dealer, deck):
     make_bet(player)
     deal_cards(player, dealer, deck)
-#     # print_cards_during_hand(player, dealer)
+    print_cards_during_hand(player, dealer)
 #     #insert side
 
 #start game
@@ -238,6 +242,6 @@ player_1 = Player()
 dealer_1 = Dealer()
 deck_1 = Deck()
 
-# set_player_name(player_1)
+set_player_name(player_1)
 
 game_play(player_1, dealer_1, deck_1)
