@@ -77,18 +77,19 @@ def make_bet(player):
             else:
                 os.system('cls' if os.name == 'nt' else 'clear')
     
-def draw_card(player, deck):
+def draw_card(player, dealer, deck):
     random_deck_index = random.randint(0, (len(deck.cards)-1))
     deck.delt_cards.append(deck.cards[random_deck_index])
     player.cards.append(deck.cards[random_deck_index])
     deck.cards.pop(random_deck_index)
-    move_aces_to_end_of_all_players_cards()
+    move_aces_to_end_of_all_players_cards(player, dealer)
 
 def deal_cards(player, dealer, deck):
     for i in range(1, 3):
-        draw_card(deck, player)
+        draw_card(player, dealer, deck)
     for i in range(1, 3):
-        draw_card(deck, dealer)
+        #This function has player/dealer flipped to allow for draw card to work correctly for the initial deal.
+        draw_card(dealer, player, deck)
 
 def print_cards_during_hand(player, dealer):
     print("Dealer cards: X " + dealer.cards[1])
@@ -225,7 +226,7 @@ def end_hand(player, dealer, deck):
 
 def game_play(player, dealer, deck):
     make_bet(player)
-#     # deal_cards(player, dealer, deck)
+    deal_cards(player, dealer, deck)
 #     # print_cards_during_hand(player, dealer)
 #     #insert side
 
