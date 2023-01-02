@@ -19,12 +19,13 @@ class Player:
     cash = 1000
     current_bet = 0
     requested_side_bets = []
+    insurance_bet = 0
 
 def start_game():
     player_start = False
     while player_start == False:
         print("Welcome to the Blackjack table!")
-        player_ready = input("Enter 'start' to begin.")
+        player_ready = input("Enter 'start' to begin. ")
         if player_ready.lower() == "start":
             player_start = True
             os.system('cls' if os.name == 'nt' else 'clear')
@@ -35,14 +36,18 @@ def start_game():
 def set_player_name(player):
     set_player_name_complete = False
     while set_player_name_complete == False:
-        input_name = input("Enter player name:")
+        input_name = input("Enter player name: ")
         correct_name_confirmation = input(input_name + ". Is this correct? (y/n)")
         if correct_name_confirmation != "y" and correct_name_confirmation != "n":
             print("Invaild choice")
+            time.sleep(3)
+            os.system('cls' if os.name == 'nt' else 'clear')
             continue
         if correct_name_confirmation == "y":
             player.name = input_name
             set_player_name_complete = True
+        else:
+            os.system('cls' if os.name == 'nt' else 'clear')
     print("Welcome, " + player.name)
     print("Your starting chips value is $1,000")
     time.sleep(3)
@@ -51,19 +56,26 @@ def make_bet(player):
     still_setting_bet = True
     while still_setting_bet == True:
         os.system('cls' if os.name == 'nt' else 'clear')
-        print("Your current chip value: $" + player.cash)
-        input_bet_amount = input("How much would you like to bet on this hand?")
+        print("Your current chip value: $" + str(player.cash))
+        input_bet_amount = int(input("How much would you like to bet on this hand? "))
         if type(input_bet_amount) != int:
             print("Invalid Answer.")
             time.sleep(3)
+            os.system('cls' if os.name == 'nt' else 'clear')
             continue
         if input_bet_amount > player.cash:
             print("That is more money than you have.")
             time.sleep(3)
+            os.system('cls' if os.name == 'nt' else 'clear')
             continue
         if input_bet_amount <= player.cash:
-            player.current_bet = input_bet_amount
-            player.cash -= input_bet_amount
+            player_confirmation = input(str(input_bet_amount) + ". Is this correct?(y/n) ")
+            if player_confirmation == "y":
+                player.current_bet = input_bet_amount
+                player.cash -= input_bet_amount
+                still_setting_bet = False
+            else:
+                os.system('cls' if os.name == 'nt' else 'clear')
     
 def draw_card(player, deck):
     random_deck_index = random.randint(0, (len(deck.cards)-1))
@@ -88,7 +100,7 @@ def print_cards_during_hand(player, dealer):
     print("Chips: $" + player.cash)
 
 def print_cards_dealers_turn(player, dealer):
-    print("Dealer cards: X " + dealer.cards)
+    print("Dealer cards: " + dealer.cards)
     print(player.name + "'s cards: " + player.cards)
 
 #to move aces to end of hand in order for compute_hand_score function to properly assign a 1 or 10 value to the ace.
@@ -175,9 +187,10 @@ def execute_double_down(player):
     player.current_bet = (player.current_bet * 2)
     #insert way to limit additional cards to 1
 
+#this has to happen with original bet amount 
 def execute_insurance(player, dealer):
     if check_if_insurance_side_bet_available(dealer) == True:
-        
+        player.insurance_bet = player.current_bet
 
 
 
@@ -212,6 +225,18 @@ def end_hand(player, dealer, deck):
 
 def game_play(player, dealer, deck):
     make_bet(player)
-    deal_cards(player, dealer, deck)
-    print_cards_during_hand(player, dealer)
-    #insert side 
+#     # deal_cards(player, dealer, deck)
+#     # print_cards_during_hand(player, dealer)
+#     #insert side
+
+#start game
+
+# start_game()
+
+player_1 = Player()
+dealer_1 = Dealer()
+deck_1 = Deck()
+
+# set_player_name(player_1)
+
+game_play(player_1, dealer_1, deck_1)
