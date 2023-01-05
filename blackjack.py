@@ -5,21 +5,30 @@ import os
 import time
 
 class Deck:
-    cards = ["A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2]
+    cards = ["A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2, "A", "K", "Q", "J", 10, 9, 8, 7, 6, 5, 4, 3, 2]
     delt_cards = []
 
 class Dealer:
-    cards = []
+    hand = []
     score = 0
 
 class Player:
     name = ""
-    cards = []
-    score = 0
     cash = 1000
-    current_bet = 0
-    requested_side_bets = []
+    initial_bet = 0
     insurance_bet = 0
+    #hands 2-4 are for splitting
+    hand_1 = []
+    hand_2 = []
+    hand_3 = []
+    hand_4 = []
+    hand_1_score = 0
+    hand_2_score = 0
+    hand_3_score = 0
+    hand_4_score = 0
+    hands_in_play = []
+    available_plays = []
+    
 
 def start_game():
     player_start = False
@@ -37,6 +46,7 @@ def set_player_name(player):
     set_player_name_complete = False
     while set_player_name_complete == False:
         input_name = input("Enter player name: ")
+        os.system('cls' if os.name == 'nt' else 'clear')
         correct_name_confirmation = input(input_name + ". Is this correct? (y/n)")
         if correct_name_confirmation != "y" and correct_name_confirmation != "n":
             print("Invaild choice")
@@ -48,7 +58,8 @@ def set_player_name(player):
             set_player_name_complete = True
         else:
             os.system('cls' if os.name == 'nt' else 'clear')
-    print("Welcome, " + player.name)
+    os.system('cls' if os.name == 'nt' else 'clear')
+    print("Welcome, " + player.name + ".")
     print("Your starting chips value is $1,000")
     time.sleep(3)
 
@@ -69,73 +80,111 @@ def make_bet(player):
             os.system('cls' if os.name == 'nt' else 'clear')
             continue
         if input_bet_amount <= player.cash:
-            player_confirmation = input(str(input_bet_amount) + ". Is this correct?(y/n) ")
+            player_confirmation = input("$" + str(input_bet_amount) + ". Is this correct?(y/n) ")
             if player_confirmation == "y":
-                player.current_bet = input_bet_amount
+                player.initial_bet = input_bet_amount
                 player.cash -= input_bet_amount
                 still_setting_bet = False
             else:
                 os.system('cls' if os.name == 'nt' else 'clear')
-    
-def draw_card(player, dealer, deck):
+
+
+def draw_card(hand, deck):
     random_deck_index = random.randint(0, (len(deck.cards)-1))
     deck.delt_cards.append(deck.cards[random_deck_index])
-    player.cards.append(deck.cards[random_deck_index])
+    hand.append(deck.cards[random_deck_index])
     deck.cards.pop(random_deck_index)
-    move_aces_to_end_of_all_players_cards(player, dealer)
-    compute_hand_score(player, dealer)
 
 def deal_cards(player, dealer, deck):
-    for i in range(1, 3):
-        draw_card(player, dealer, deck)
-    for i in range(1, 3):
-        #This function has player/dealer flipped to allow for draw card to work correctly for the initial deal.
-        draw_card(dealer, player, deck)
-    
-
-def print_cards_during_hand(player, dealer):
     os.system('cls' if os.name == 'nt' else 'clear')
-    print("Dealer cards: X " + str(dealer.cards[1]))
+    hands_to_deal = [player.hand_1, dealer.hand]
+    for hand in hands_to_deal:
+        counter = 0
+        while counter < 2:
+            draw_card(hand, deck)
+            counter += 1
+    dealing_animation()
+
+# dealing animation to create real-life feeling
+def dealing_animation():
+    message = "Dealing"
+    print(message)
+    counter = 0
+    while counter < 3:
+        time.sleep(1)
+        message = message + "."
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print(message)
+        counter += 1
+    os.system('cls' if os.name == 'nt' else 'clear')
+
+# to move aces to end of hand in order for compute_hand_score function to properly assign a 1 or 10 value to the ace.
+
+
+def move_aces_to_end_of_hand(hand):
+    aces_in_hand = []
+    for i in hand:
+        if i == "A":
+            aces_in_hand.append(i)
+            hand.remove(i)
+    for i in aces_in_hand:
+        hand.append(i)
+
+
+def compute_hand_score(hand):
+    move_aces_to_end_of_hand(hand)
+    hand_score = 0
+    for i in hand:
+        if type(i) == int:
+            hand_score += i
+        if i == "K" or i == "Q" or i == "J":
+            hand_score += 10
+        if i == "A":
+            if hand_score + 11 > 21:
+                hand_score += 1
+            else:
+                hand_score += 11
+    return hand_score
+
+def determine_hands_in_play(player):
+    possible_hands = [player.hand_1, player.hand_2,player.hand_3, player.hand_4]
+    counter = 0
+    while counter < 4:
+        if len(possible_hands[counter]) > 0:
+            player.hands_in_play.append(possible_hands[counter])
+            counter += 1
+        else:
+            counter +=1
+
+def print_player_hands_and_scores(player):
+    print(player.name + "'s cards:")
+    determine_hands_in_play(player)
+    for hand in player.hands_in_play:
+        hand_string = ""
+        for card in hand:
+            hand_string += str(card) + " "
+        print(hand_string)
+            
+    print("Bet: $" + str(player.initial_bet))
     print("")
-    print(player.name + "'s cards: " + str(player.cards[0]) + " " + str(player.cards[1]))
-    print(player.name + "'s score: " + str(player.score))
+
+            
+    
+                
+def print_dealer_cards_during_hand(dealer):
+    print("Dealer's cards:")
+    print("X " + str(dealer.hand[1]))
+
+def print_table_during_hand(player, dealer):
+    print_dealer_cards_during_hand(dealer)
     print("")
-    print("Bet amount: $" + str(player.current_bet))
-    print("Chips: $" + str(player.cash))
+    print_player_hands_and_scores(player)
 
-def print_cards_dealers_turn(player, dealer):
-    print("Dealer cards: " + dealer.cards)
-    print(player.name + "'s cards: " + player.cards)
-
-#to move aces to end of hand in order for compute_hand_score function to properly assign a 1 or 10 value to the ace.
-def move_aces_to_end_of_all_players_cards(player, dealer):
-    for person in [player, dealer]:
-        aces_in_hand = []
-        for i in person.cards:
-            if i == "A":
-                aces_in_hand.append(i)
-                person.cards.remove(i)
-        for i in aces_in_hand:
-            person.cards.append(i)
-
-
-def compute_hand_score(player, dealer):
-    for person in [player, dealer]:
-        hand_score = 0
-        for i in person.cards:
-            if type(i) == int:
-                hand_score += i
-            if i == "K" or i == "Q" or i == "J":
-                hand_score += 10
-            if i == "A":
-                if hand_score + 11 > 21:
-                    hand_score += 1
-                else:
-                    hand_score += 11
-        person.score = hand_score
 
 # Next several functions for side betting.
 def check_if_player_can_split(player):
+    if player.current_bet > player.cash:
+        return False
     value_10_cards = ["K", "Q", "J", 10]
     if player.cards[0] == player.cards[1]:
         return True
@@ -150,93 +199,109 @@ def check_if_insurance_side_bet_available(dealer):
     else:
         return False
 
-def available_side_bets(player, dealer):
-    available_side_bets = ["Surrender","Double Down"]
+def initial_player_options(player, dealer):
+    player.available_plays = ["Hit", "Stand", "Double Down", "Surrender"]
     if check_if_player_can_split(player) == True:
-        available_side_bets.append("Split")
+        player.available_plays.insert(3, "Split")
     if check_if_insurance_side_bet_available(dealer) == True:
-        available_side_bets.append("Insurance")
-    available_side_bets.append("No Side Bet")
-    return available_side_bets
+        if len(player.available_plays) == 4:
+            player.available_plays.insert(3, "Insurance")
+        if len(player.available_plays) == 5:
+            player.available_plays.insert(4, "Insurance")
+    print("")
+    print("Available Plays:")
+    for i in player.available_plays:
+        print(i)
 
-def set_side_bet(player, dealer):
-    setting_side_bet = True
-    while setting_side_bet == True:
-        os.system('cls' if os.name == 'nt' else 'clear')
-        print_cards_during_hand(player, dealer)
-        player_wants_side_bet = input("Would you like to place a side bet? (y/n)")
-        if player_wants_side_bet == "y":
-            os.system('cls' if os.name == 'nt' else 'clear')
-            print_cards_during_hand(player, dealer)
-            print("Available Side Bets:")
-            available_side_bets = available_side_bets(player, dealer)
-            for side_bet in available_side_bets:
-                print(side_bet)
-            selected_side_bet = input("Enter Selection: ")
-            if selected_side_bet not in available_side_bets:
-                continue
-            else:
-                setting_side_bet = False
-                return selected_side_bet
-        if player_wants_side_bet == "n":
-            setting_side_bet = False
-        else:
-            continue
+# # def execute_player_choice(player, dealer, deck):
+# #     play_selected = False
+# #     while play_selected == False:
+# #         player_choice = input("Enter play: ")
+# #         if player_choice not in player.available_plays:
+# #             print("Invaild entry.")
+# #             time.sleep(2)
+# #             print_cards_during_hand(player, dealer)
+# #             initial_player_options(player, dealer)
+# #             continue
 
-def execute_surrender(player, dealer):
+# #         if player_choice.lower() == "hit":
+# #             draw_card(player, dealer, deck)
+# #             play_selected = True
+
+# #         if player_choice.lower() == "double down":
+# #             execute_double_down(player)
+# #             play_selected = True
+
+# #         if player_choice.lower() == "split":
+
+        
+
+def execute_surrender(player):
     player.cash += (player.current_bet / 2)
-    #insert some way to ed the hand
+    # insert some way to ed the hand
 
 def execute_double_down(player):
     player.cash -= player.current_bet
     player.current_bet = (player.current_bet * 2)
-    #insert way to limit additional cards to 1
+#     #insert way to limit additional cards to 1
 
-#this has to happen with original bet amount 
-def execute_insurance(player, dealer):
-    if check_if_insurance_side_bet_available(dealer) == True:
-        player.insurance_bet = player.current_bet
+# #this has to happen with original bet amount 
+def execute_insurance(player):
+    player.insurance_bet = (player.current_bet / 2)
+    #insert code to print this bet in print during hand
+
+# def execute_split(player, dealer, deck):
+#     player.split_cards.append(player.cards[1])
+#     del player.cards[1]
+#     player.split_bet = player.current_bet
+#     player.cash -= player.current_bet
 
 
 
+# def offer_player_to_hit(player):
+#     answer_submitted = False
+#     while answer_submitted == False:
+#         player_wants_hit = input("would you like another card? (y/n)")
+#         if player_wants_hit == "y":
+#             draw_card(player)
+#             answer_submitted = True
+#         if player_wants_hit == "n":
+#             answer_submitted = True
+#         else:
+#             continue
 
-def offer_player_to_hit(player):
-    answer_submitted = False
-    while answer_submitted == False:
-        player_wants_hit = input("would you like another card? (y/n)")
-        if player_wants_hit == "y":
-            draw_card(player)
-            answer_submitted = True
-        if player_wants_hit == "n":
-            answer_submitted = True
-        else:
-            continue
+# def dealer_hitting(dealer, deck):
+#     while dealer.score < 17:
+#         draw_card(deck, dealer)
+#         compute_hand_score(dealer)
 
-def dealer_hitting(dealer, deck):
-    while dealer.score < 17:
-        draw_card(deck, dealer)
-        compute_hand_score(dealer)
+# def print_cards_dealers_turn(player, dealer):
+#     print("Dealer cards: " + dealer.cards)
+#     print(player.name + "'s cards: " + player.cards)
 
-def end_hand(player, dealer, deck):
-    player.cards = []
-    player.score = 0
-    dealer.cards = []
-    dealer.score = 0
-    player.current_bet = 0
+# def end_hand(player, dealer, deck):
+#     player.cards = []
+#     player.score = 0
+#     dealer.cards = []
+#     dealer.score = 0
+#     player.current_bet = 0
 
-    for card in deck.delt_cards:
-        deck.cards.append(card)
-        deck.delt_cards.remove(card)
+#     for card in deck.delt_cards:
+#         deck.cards.append(card)
+#         deck.delt_cards.remove(card)
 
 def game_play(player, dealer, deck):
     make_bet(player)
     deal_cards(player, dealer, deck)
-    print_cards_during_hand(player, dealer)
-#     #insert side
+    print_table_during_hand(player, dealer)
+#     # print_cards_during_hand(player)
+    
 
-#start game
+####start game####
 
-# start_game()
+os.system('cls' if os.name == 'nt' else 'clear')
+
+start_game()
 
 player_1 = Player()
 dealer_1 = Dealer()
@@ -245,3 +310,14 @@ deck_1 = Deck()
 set_player_name(player_1)
 
 game_play(player_1, dealer_1, deck_1)
+
+# print(player_hand_1.cards)
+# print(dealer_hand.cards)
+
+# deal_cards(player_1, dealer_1, deck_1)
+# print_player_hands_and_scores(player_1)
+
+# print(player_1.hand_1)
+# print(dealer_1.hand)
+# print(deck_1.cards)
+# print(deck_1.delt_cards)
