@@ -166,6 +166,9 @@ def print_player_hands_and_scores(player):
         print(hand_string)
             
     print("Bet: $" + str(player.initial_bet))
+
+    if player.insurance_bet > 0:
+        print("Insurance: " + str(player.insurance_bet))
     print("")
 
             
@@ -238,23 +241,22 @@ def initial_player_options(player, dealer):
 
 def execute_surrender(player):
     player.cash += (player.current_bet / 2)
-    # insert some way to ed the hand
+    # insert some way to end the hand
 
 def execute_double_down(player):
     player.cash -= player.current_bet
     player.current_bet = (player.current_bet * 2)
-#     #insert way to limit additional cards to 1
+    draw_card(player.hand_1, deck_1)
+    #end player turn
 
-# #this has to happen with original bet amount 
+
+
 def execute_insurance(player):
     player.insurance_bet = (player.current_bet / 2)
-    #insert code to print this bet in print during hand
+    player.available_plays.remove("Insurance")
 
-# def execute_split(player, dealer, deck):
-#     player.split_cards.append(player.cards[1])
-#     del player.cards[1]
-#     player.split_bet = player.current_bet
-#     player.cash -= player.current_bet
+def execute_split(player, hand):
+    player.hand_2.append(player.hand_1)
 
 
 
